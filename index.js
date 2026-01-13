@@ -3,12 +3,12 @@ import express from "express";
 const app = express();
 app.use(express.json());
 
-// ROOT ROUTE (IMPORTANT)
+// health check / root
 app.get("/", (req, res) => {
-  res.send("WhatsApp Auto Reply Server Running ✅");
+  res.status(200).send("WhatsApp Auto Reply Server Running ✅");
   });
 
-  // WEBHOOK VERIFY (Meta ke liye)
+  // webhook verify
   app.get("/webhook", (req, res) => {
     const VERIFY_TOKEN = "ankush123";
 
@@ -18,19 +18,19 @@ app.get("/", (req, res) => {
 
             if (mode === "subscribe" && token === VERIFY_TOKEN) {
                 return res.status(200).send(challenge);
-                  } else {
-                      return res.sendStatus(403);
-                        }
-                        });
+                  }
+                    return res.sendStatus(403);
+                    });
 
-                        // WEBHOOK POST (messages yaha aayenge)
-                        app.post("/webhook", (req, res) => {
-                          console.log("Incoming webhook:");
-                            console.log(JSON.stringify(req.body, null, 2));
-                              res.sendStatus(200);
-                              });
+                    // webhook receiver
+                    app.post("/webhook", (req, res) => {
+                      console.log("Webhook received");
+                        console.log(JSON.stringify(req.body, null, 2));
+                          res.sendStatus(200);
+                          });
 
-                              const PORT = process.env.PORT || 3000;
-                              app.listen(PORT, () => {
-                                console.log("Server running on port", PORT);
-                                });
+                          /**
+                           * 🚨 MOST IMPORTANT LINE
+                            * Railway injects PORT automatically
+                             */
+                             const PORT = process
